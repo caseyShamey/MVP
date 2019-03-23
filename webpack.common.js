@@ -10,6 +10,9 @@ module.exports = {
     filename: 'bundle.js',
     path: path.join(__dirname, './client/dist'),
   },
+  resolve: {
+    extensions: ['.js', '.jsx']
+  },
   module: {
     rules: [
       {
@@ -34,6 +37,11 @@ module.exports = {
                 outputPath: 'fonts/'
             }
         }]
+      },
+      {
+        test: /\.jsx?$/,
+        use: [{ loader: 'babel-loader' }],
+        exclude: ['/node_modules/'],
       }
     ]
   },
