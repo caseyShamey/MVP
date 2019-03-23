@@ -9,7 +9,7 @@
   "scripts": {
     "start": "nodemon server/server.js",
     "build": "webpack --config webpack.prod.js",
-    "webpack": "webpack-dev-server --config webpack.dev.js",
+    "webpack": "webpack --watch",
     "test": "jest ./test"
   },
   "author": "",

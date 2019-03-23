@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import VideoPlayer from './VideoPlayer.jsx';
 import VideoCreator from './VideoCreator.jsx'
 
+var videoPlayer = <VideoPlayer />
+var videoCreator = <VideoCreator />
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      view: videoPlayer
+      view: videoCreator
     }
   }
 
@@ -18,13 +20,12 @@ class App extends Component {
   render() {
     return (
       <div>
-        <VideoPlayer />
+        {this.state.view}
       </div>
     )
   }
 }
 
-var videoPlayer = <VideoPlayer />
-var videoCreator = <VideoCreator />
+
 
 export default App

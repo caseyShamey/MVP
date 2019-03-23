@@ -8,7 +8,7 @@ class VideoCreator extends React.Component {
 
   render() {
     return (
-      <div></div>
+      <div>Test</div>
     )
   }
 }

@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 
 module.exports = {
+  // mode: 'development',
   entry: {
     main: path.join(__dirname, './client/src/index.js'),
   },
@@ -29,6 +30,11 @@ module.exports = {
         }],
       },
       {
+        test: /\.jsx?$/,
+        use: [{ loader: 'babel-loader' }],
+        exclude: ['/node_modules/'],
+      },
+      {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         use: [{
             loader: 'file-loader',
@@ -37,11 +43,6 @@ module.exports = {
                 outputPath: 'fonts/'
             }
         }]
-      },
-      {
-        test: /\.jsx?$/,
-        use: [{ loader: 'babel-loader' }],
-        exclude: ['/node_modules/'],
       }
     ]
   },
