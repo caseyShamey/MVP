@@ -1,5 +1,5 @@
 import React from 'react';
-import Axios from 'axios';
+import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
@@ -12,17 +12,36 @@ class VideoCreator extends React.Component {
     this.state = {
       currentNode: null,
       parentNode: null,
+      link: null,
       choiceOne: null,
       choiceTwo: null
     }
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleParentClick = this.handleParentClick.bind(this);
     this.handleChoiceClick = this.handleChoiceClick.bind(this);
+    this.handleLinkChange = this.handleLinkChange.bind(this);
+    this.handleChoiceOneChange = this.handleChoiceOneChange.bind(this);
+    this.handleChoiceTwoChange = this.handleChoiceTwoChange.bind(this);
+
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    console.log('Submitted!')
+    console.log(this.state)
+    axios.post('/videoCreator', {
+      link: this.state.link,
+      choiceOne: this.state.choiceOne,
+      choiceTwo: this.state.choiceTwo
+    })
+    .then(response => {
+      console.log(response)
+      this.setState({currentNode: response.data._id})
+      console.log('currentNode:', this.state.currentNode)
+      console.log('parentNode:', response.data.parentNode)
+    })
+    .catch(error => {
+      console.log(error)
+    });
   }
 
   handleParentClick(event) {
@@ -31,6 +50,18 @@ class VideoCreator extends React.Component {
 
   handleChoiceClick(event) {
     console.log('You Clicked Here Too!')
+  }
+
+  handleLinkChange(event) {
+    this.setState({link: event.target.value});
+  }
+
+  handleChoiceOneChange(event) {
+    this.setState({choiceOne: event.target.value});
+  }
+
+  handleChoiceTwoChange(event) {
+    this.setState({choiceTwo: event.target.value});
   }
 
   render() {
@@ -135,6 +166,7 @@ class VideoCreator extends React.Component {
                       variant="contained"
                       color="primary"
                       type="submit"
+                      value="Submit"
                     >
                       Submit Node
                     </Button>

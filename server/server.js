@@ -26,7 +26,7 @@ app.post('/videoCreator', (req, res) => {
     if (err) {
       res.status(404).send('Error!')
     } else {
-      res.send(console.log('result:', result));
+      res.send(result);
     }
   })
 })
