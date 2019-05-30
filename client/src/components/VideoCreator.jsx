@@ -1,27 +1,50 @@
 import React from 'react';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+
 import Form from './Form';
+
+// create separate get post and put functions
 
 class VideoCreator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       parentNode: undefined,
+      parentParent: undefined,
       parentLink: "",
       parentChoiceOne: "",
       parentChoiceTwo: "",
-      parentChildren: [],
+      parentChildOne: undefined,
+      parentChildTwo: undefined,
 
       currentNode: undefined,
+      parent: undefined,
       link: "",
       choiceOne: "",
       choiceTwo: "",
-      children: [],
+      childOne: undefined,
+      childTwo: undefined,
+      fromChild: "",
+
+      childOneNode: undefined,
+      childOneParent: undefined,
+      childOneLink: "",
+      childOneChoiceOne: "",
+      childOneChoiceTwo: "",
+      childOneChildOne: undefined,
+      childOneChildTwo: undefined,
+
+      childTwoNode: undefined,
+      childTwoParent: undefined,
+      childTwoLink: "",
+      childTwoChoiceOne: "",
+      childTwoChoiceTwo: "",
+      childTwoChildOne: undefined,
+      childTwoChildTwo: undefined,
 
       linkFormId: 'Link',
       linkFormType: 'url',
@@ -39,45 +62,226 @@ class VideoCreator extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleParentClick = this.handleParentClick.bind(this);
     this.handleChoiceClickOne = this.handleChoiceClickOne.bind(this);
-    this.handleChoiceClickTwo = this.handleChoiceClickTwo.bind(this);
     this.handleLinkChange = this.handleLinkChange.bind(this);
+    this.handleChoiceClickTwo = this.handleChoiceClickTwo.bind(this);
     this.handleChoiceOneChange = this.handleChoiceOneChange.bind(this);
     this.handleChoiceTwoChange = this.handleChoiceTwoChange.bind(this);
+    this.getParent = this.getParent.bind(this);
+    this.getCurrent = this.getCurrent.bind(this);
+    this.getChildOne = this.getChildOne.bind(this);
+    this.getChildTwo = this.getChildTwo.bind(this);
+    this.clearParent = this.clearParent.bind(this);
+    this.clearCurrent = this.clearCurrent.bind(this);
+    this.clearChildOne = this.clearChildOne.bind(this);
+    this.clearChildTwo = this.clearChildTwo.bind(this);
+  }
 
+  async componentDidMount() {
+    // loads head of graph from database
+    let call = await axios.get('/init')
+    let response = await call
+    await this.setState({
+      parent: response.data.parent,
+      currentNode: response.data._id,
+      link: response.data.link,
+      choiceOne: response.data.choiceOne,
+      choiceTwo: response.data.choiceTwo,
+      childOne: response.data.childOne,
+      childTwo: response.data.childTwo
+    })
+    console.log('initial load', this.state)
+    if (this.state.childOne !== undefined) {
+      await this.getChildOne(this.state.childOne)
+    }
+    if (this.state.childTwo !== undefined) {
+      await this.getChildTwo(this.state.childOne)
+    }
+  }
+
+  clearParent () {
+    this.setState({
+      parentNode: undefined,
+      parentParent: undefined,
+      parentLink: "",
+      parentChoiceOne: "",
+      parentChoiceTwo: "",
+      parentChildOne: undefined,
+      parentChildTwo: undefined
+    })
+  }
+
+  clearCurrent () {
+    this.setState({
+      currentNode: undefined,
+      parent: undefined,
+      link: "",
+      choiceOne: "",
+      choiceTwo: "",
+      childOne: undefined,
+      childTwo: undefined,
+      fromChild: ""
+    })
+  }
+
+  clearChildOne () {
+    this.setState({
+      childOneNode: undefined,
+      childOneParent: undefined,
+      childOneLink: "",
+      childOneChoiceOne: "",
+      childOneChoiceTwo: "",
+      childOneChildOne: undefined,
+      childOneChildTwo: undefined
+    })
+  }
+
+  clearChildTwo () {
+    this.setState({
+      childTwoNode: undefined,
+      childTwoParent: undefined,
+      childTwoLink: "",
+      childTwoChoiceOne: "",
+      childTwoChoiceTwo: "",
+      childTwoChildOne: undefined,
+      childTwoChildTwo: undefined
+    })
+  }
+
+
+
+
+  async getParent(node) {
+    let call = axios.get('/getNode?_id=' + node)
+    let response = await call
+    console.log('response', response)
+    this.setState({
+      parentNode: response.data._id,
+      parentParent: response.data.parent,
+      parentLink: response.data.link,
+      parentChoiceOne: response.data.choiceOne,
+      parentChoiceTwo: response.data.choiceTwo,
+      parentChildOne: response.data.childOne,
+      parentChildTwo: response.data.childTwo,
+    }, () => {
+      console.log('parent node set', this.state.parentChildOne)
+    })
+  }
+
+  async getCurrent(node) {
+    let call = axios.get('/getNode?_id=' + node)
+    let response = await call
+    console.log ('response', response)
+    this.setState({
+      currentNode: response.data._id,
+      parent: response.data.parent,
+      link: response.data.link,
+      choiceOne: response.data.choiceOne,
+      choiceTwo: response.data.choiceTwo,
+      childOne: response.data.childOne,
+      childTwo: response.data.childTwo,
+    }, () => {
+      console.log('current node set')
+    })
+  }
+
+  async getChildOne(node) {
+    let call = axios.get('/getNode?_id=' + node)
+    let response = await call
+    this.setState({
+      childOneNode: response.data._id,
+      childOneParent: response.data.parent,
+      childOneLink: response.data.link,
+      childOneChoiceOne: response.data.choiceOne,
+      childOneChoiceTwo: response.data.choiceTwo,
+      childOneChildOne: response.data.childOne,
+      childOneChildTwo: response.data.childTwo
+    }, () => {
+      console.log('childOne node set')
+    })
+  }
+
+  async getChildTwo(node) {
+    let call = axios.get('/getNode?_id=' + node)
+    let response = await call
+    console.log ('response', response)
+    this.setState({
+      childTwoNode: response.data._id,
+      childTwoParent: response.data.parent,
+      childTwoLink: response.data.link,
+      childTwoChoiceOne: response.data.choiceOne,
+      childTwoChoiceTwo: response.data.choiceTwo,
+      childTwoChildOne: response.data.childOne,
+      childTwoChildTwo: response.data.childTwo
+    }, () => {
+      console.log('childOne node set')
+    })
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    if (!this.state.parentNode) {
-      axios.post('/videoCreator', {
-        head: true,
+    // new node
+    if (!this.state.currentNode) {
+      // set head node on first save
+      if (!this.state.parentNode) {
+        axios.post('/save', {
+          head: true,
+          link: this.state.link,
+          choiceOne: this.state.choiceOne,
+          choiceTwo: this.state.choiceTwo,
+          childOne: this.state.childOne,
+          childTwo: this.state.childTwo
+        })
+        .then(response => {
+          this.setState({currentNode: response.data._id})
+        })
+        .catch(error => {
+          console.log(error)
+        });
+      } else {
+        // save non head node on first save
+        axios.post('/save', {
+          head: false,
+          parent: this.state.parent,
+          link: this.state.link,
+          choiceOne: this.state.choiceOne,
+          choiceTwo: this.state.choiceTwo,
+          childOne: this.state.childOne,
+          childTwo: this.state.childTwo
+        })
+        .then(response => {
+          this.setState({currentNode: response.data._id}, () => {
+            if (this.state.fromChild === 'One') {
+              axios.put('/update?_id=' + this.state.parent, {
+                childOne: this.state.currentNode
+              })
+              .then(response => {console.log('updated')})
+              .catch(error => {
+                console.log(error)
+              });
+            } else if (this.state.fromChild === 'Two') {
+              axios.put('/update?_id=' + this.state.parent, {
+                childTwo: this.state.currentNode
+              })
+              .then(response => {console.log('parent', response.body)})
+              .catch(error => {
+                console.log(error)
+              })
+            }
+          })
+        })
+      }
+    } else {
+      // update node
+      axios.put('/update?_id=' + this.state.currentNode, {
+        parent: this.state.parent,
         link: this.state.link,
         choiceOne: this.state.choiceOne,
         choiceTwo: this.state.choiceTwo,
-        children: []
+        childOne: this.state.childOne,
+        childTwo: this.state.childTwo
       })
       .then(response => {
-        console.log('response', response.data)
-        this.setState({currentNode: response.data._id})
-        console.log('currentNode:', this.state.currentNode)
-        console.log('parentNode:', response.data.parentNode)
-      })
-      .catch(error => {
-        console.log(error)
-      });
-    } else {
-      axios.post('/videoCreator', {
-        head: false,
-        link: this.state.currentLink,
-        choiceOne: this.state.choiceOne,
-        choiceTwo: this.state.choiceTwo,
-        children: []
-      })
-      .then(response => {
-        console.log('response', response.data)
-        this.setState({currentNode: response.data._id})
-        console.log('currentNode', this.state.currentNode)
-        console.log('parentNode:', response.data.parentNode)
+        console.log('put response', response)
       })
       .catch(error => {
         console.log(error)
@@ -85,40 +289,75 @@ class VideoCreator extends React.Component {
     }
   }
 
-  handleParentClick(event) {
-    console.log('You Clicked!')
+  async handleParentClick(event) {
+    // move parent node to current node
+    if (!this.state.parent) {
+      alert('Current node is head');
+    } else {
+      await this.getCurrent(this.state.parent)
+    }
+    await this.clearParent()
+    await this.clearChildOne()
+    await this.clearChildTwo()
+    if (this.state.parent !== undefined) {
+      await this.getParent(this.state.parent)
+    }
+    if (this.state.childOne !== undefined) {
+      await this.getChildOne(this.state.childOne)
+    }
+    if (this.state.childTwo !== undefined) {
+      await this.getChildTwo(this.state.childOne)
+    }
   }
 
-  handleChoiceClickOne(event) {
-    this.setState({
-      parentNode: this.state.currentNode,
-      parentNode: undefined,
-      parentLink: this.state.link,
-      parentChoiceOne: this.state.choiceOne,
-      parentChoiceTwo: this.state.choiceTwo,
-      parentChildren: [],
-
-      currentNode: undefined,
-      link: "",
-      choiceOne: "",
-      choiceTwo: ""
-    }, () => {console.log('updated state', this.state)})
-
-    // axios get call for parent node then
+  async handleChoiceClickOne(event) {
+    await this.setState({fromChild: 'One'})
+    if (!this.state.childOne) {
+      let holder = this.state.currentNode
+      await this.clearCurrent()
+      await this.setState({parent: holder})
+    } else {
+      await this.getCurrent(this.state.childOne)
+    }
+    await this.clearParent()
+    await this.clearChildOne()
+    await this.clearChildTwo()
+    if (this.state.parent !== undefined) {
+      await this.getParent(this.state.parent)
+    }
+    if (this.state.childOne !== undefined) {
+      await this.getChildOne(this.state.childOne)
+    }
+    if (this.state.childTwo !== undefined) {
+      await this.getChildTwo(this.state.childOne)
+    }
   }
 
-  handleChoiceClickTwo(event) {
-    this.setState({
-      parentNode: this.state.currentNode,
-      currentNode: undefined,
-      link: "",
-      choiceOne: "",
-      choiceTwo: ""
-    })
+  async handleChoiceClickTwo(event) {
+    await this.setState({fromChild: 'Two'})
+    if (!this.state.childTwo) {
+      let holder = this.state.currentNode
+      await this.clearCurrent()
+      await this.setState({parent: holder})
+    } else {
+      await this.getCurrent(this.state.childTwo)
+    }
+    await this.clearParent()
+    await this.clearChildOne()
+    await this.clearChildTwo()
+    if (this.state.parent !== undefined) {
+      await this.getParent(this.state.parent)
+    }
+    if (this.state.childOne !== undefined) {
+      await this.getChildOne(this.state.childOne)
+    }
+    if (this.state.childTwo !== undefined) {
+      await this.getChildTwo(this.state.childOne)
+    }
   }
 
   handleLinkChange(event) {
-    this.setState({link: event.target.value}, () => console.log('link', this.state.link));
+    this.setState({link: event.target.value});
   }
 
   handleChoiceOneChange(event) {
@@ -158,7 +397,6 @@ class VideoCreator extends React.Component {
                 Link
               </Grid>
               <Grid item xs={12}>
-                {console.log('parentLink', this.state.parentLink)}
                 {this.state.parentLink}
               </Grid>
               <Grid item xs={6} sm container direction="row" spacing={16}>
@@ -221,7 +459,7 @@ class VideoCreator extends React.Component {
                       id={this.state.choiceTwoId}
                       type={this.state.choiceTwoType}
                       placeholder={this.state.choiceTwoPlaceholder}
-                    />>
+                    />
 
                   </Grid>
                   <Grid item xs={12}>
@@ -280,10 +518,10 @@ class VideoCreator extends React.Component {
                 </Grid>
                 <Grid item xs={12} xs container direction="row">
                   <Grid item xs={6} onClick={this.handleChoiceClickOne}>
-                    Link Here
+                    {this.state.childOneLink}
                   </Grid>
                   <Grid item xs={6} onClick={this.handleChoiceClickTwo}>
-                    Link Here
+                    {this.state.childTwoLink}
                   </Grid>
                 </Grid>
                 <Grid item xs={12} xs container direction="row">
@@ -302,16 +540,16 @@ class VideoCreator extends React.Component {
                 </Grid>
                 <Grid item xs={12} xs container direction="row">
                   <Grid item xs={3} onClick={this.handleChoiceClickOne}>
-                    Choice One Here
+                    {this.state.childOneChoiceOne}
                   </Grid>
                   <Grid item xs={3} onClick={this.handleChoiceClickOne}>
-                    Choice Two Here
+                    {this.state.childOneChoiceTwo}
                   </Grid>
                   <Grid item xs={3} onClick={this.handleChoiceClickTwo}>
-                    Choice One Here
+                    {this.state.childTwoChoiceOne}
                   </Grid>
                   <Grid item xs={3} onClick={this.handleChoiceClickTwo}>
-                    Choice Two Here
+                    {this.state.childTwoChoiceTwo}
                   </Grid>
                 </Grid>
 

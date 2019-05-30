@@ -16,9 +16,11 @@ class VideoPlayer extends Component {
     super(props);
     this.state = {
       currentNode: null,
-      url: null,
+      link: null,
       choiceOne: null,
-      choiceTwo: null
+      choiceTwo: null,
+      childOne: null,
+      childTwo: null
     }
 
     this.onChoiceOne = this.onChoiceOne.bind(this)
@@ -26,7 +28,7 @@ class VideoPlayer extends Component {
   }
 
 componentDidMount() {
-  fetch('/db')
+  fetch('/init')
         .catch(err => {
           console.error(err)
         })
@@ -37,13 +39,14 @@ componentDidMount() {
           console.error(err)
         })
         .then(res => {
-          console.log('array', JSON.parse(res[0].storyline))
-          var story = JSON.parse(res[0].storyline)
+          console.log('response', res)
           this.setState({
-            currentNode: story,
-            url: story.video,
-            choiceOne: story.choiceOneText,
-            choiceTwo: story.choiceTwoText
+            currentNode: res._id,
+            link: res.link,
+            choiceOne: res.choiceOne,
+            choiceTwo: res.choiceTwo,
+            childOne: res.childOne,
+            childTwo: res.childTwo
           })
         })
 }
@@ -79,7 +82,10 @@ onChoiceTwo() {
       <div>
         <div>
           <ReactPlayer
-            url = {this.state.url}
+            url = {this.state.link}
+            width = {1280}
+            height = {800}
+            controls = {true}
             playing />
         </div>
         <div>
