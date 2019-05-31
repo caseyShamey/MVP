@@ -57,7 +57,7 @@ app.post('/save', (req, res) => {
 
 app.put('/update', (req, res) => {
   console.log('Put body', req.query._id)
-  db.Cyoa.findOneAndUpdate(req.query._id, req.body, (err, result) => {
+  db.Cyoa.findOneAndUpdate({ _id: {$eq: req.query._id}}, req.body, (err, result) => {
     console.log('hit findOneAndUpdate', result)
     if (err) {
       res.status(404).send('Error!')

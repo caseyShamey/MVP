@@ -54,7 +54,7 @@ componentDidMount() {
 onChoiceOne() {
   let temp = this.state.currentNode
   this.setState({
-    currentNode: temp.children[0]
+    currentNode: temp.childOne
   }, function() {
     this.setState({
       url: this.state.currentNode.video,
@@ -67,7 +67,7 @@ onChoiceOne() {
 onChoiceTwo() {
   let temp = this.state.currentNode
   this.setState({
-    currentNode: temp.children[1]
+    currentNode: temp.childTwo
   }, function() {
     this.setState({
       url: this.state.currentNode.video,

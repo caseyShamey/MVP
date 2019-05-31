@@ -94,7 +94,7 @@ class VideoCreator extends React.Component {
       await this.getChildOne(this.state.childOne)
     }
     if (this.state.childTwo !== undefined) {
-      await this.getChildTwo(this.state.childOne)
+      await this.getChildTwo(this.state.childTwo)
     }
   }
 
@@ -118,8 +118,7 @@ class VideoCreator extends React.Component {
       choiceOne: "",
       choiceTwo: "",
       childOne: undefined,
-      childTwo: undefined,
-      fromChild: ""
+      childTwo: undefined
     })
   }
 
@@ -153,7 +152,7 @@ class VideoCreator extends React.Component {
   async getParent(node) {
     let call = axios.get('/getNode?_id=' + node)
     let response = await call
-    console.log('response', response)
+    console.log('parent', response.data)
     this.setState({
       parentNode: response.data._id,
       parentParent: response.data.parent,
@@ -163,14 +162,14 @@ class VideoCreator extends React.Component {
       parentChildOne: response.data.childOne,
       parentChildTwo: response.data.childTwo,
     }, () => {
-      console.log('parent node set', this.state.parentChildOne)
+      console.log('parent node set', this.state.parentNode)
     })
   }
 
   async getCurrent(node) {
     let call = axios.get('/getNode?_id=' + node)
     let response = await call
-    console.log ('response', response)
+    console.log ('current', response.data)
     this.setState({
       currentNode: response.data._id,
       parent: response.data.parent,
@@ -180,13 +179,14 @@ class VideoCreator extends React.Component {
       childOne: response.data.childOne,
       childTwo: response.data.childTwo,
     }, () => {
-      console.log('current node set')
+      console.log('current node set', this.state.currentNode)
     })
   }
 
   async getChildOne(node) {
     let call = axios.get('/getNode?_id=' + node)
     let response = await call
+    console.log('child one', response.data)
     this.setState({
       childOneNode: response.data._id,
       childOneParent: response.data.parent,
@@ -196,14 +196,14 @@ class VideoCreator extends React.Component {
       childOneChildOne: response.data.childOne,
       childOneChildTwo: response.data.childTwo
     }, () => {
-      console.log('childOne node set')
+      console.log('childOne node set', this.state.childOneNode)
     })
   }
 
   async getChildTwo(node) {
     let call = axios.get('/getNode?_id=' + node)
     let response = await call
-    console.log ('response', response)
+    console.log ('child two', response.data)
     this.setState({
       childTwoNode: response.data._id,
       childTwoParent: response.data.parent,
@@ -213,33 +213,32 @@ class VideoCreator extends React.Component {
       childTwoChildOne: response.data.childOne,
       childTwoChildTwo: response.data.childTwo
     }, () => {
-      console.log('childOne node set')
+      console.log('childTwo node set', this.state.childTwoNode)
     })
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
     // new node
     if (!this.state.currentNode) {
       // set head node on first save
-      if (!this.state.parentNode) {
-        axios.post('/save', {
+      if (!this.state.parent) {
+        console.log('head')
+        let call = axios.post('/save', {
           head: true,
           link: this.state.link,
+          parent: this.state.parent,
           choiceOne: this.state.choiceOne,
           choiceTwo: this.state.choiceTwo,
           childOne: this.state.childOne,
           childTwo: this.state.childTwo
         })
-        .then(response => {
-          this.setState({currentNode: response.data._id})
-        })
-        .catch(error => {
-          console.log(error)
-        });
+        let response = await call
+        await this.setState({currentNode: response.data._id})
       } else {
+        console.log('not head')
         // save non head node on first save
-        axios.post('/save', {
+        let call = axios.post('/save', {
           head: false,
           parent: this.state.parent,
           link: this.state.link,
@@ -248,31 +247,28 @@ class VideoCreator extends React.Component {
           childOne: this.state.childOne,
           childTwo: this.state.childTwo
         })
-        .then(response => {
-          this.setState({currentNode: response.data._id}, () => {
-            if (this.state.fromChild === 'One') {
-              axios.put('/update?_id=' + this.state.parent, {
-                childOne: this.state.currentNode
-              })
-              .then(response => {console.log('updated')})
-              .catch(error => {
-                console.log(error)
-              });
-            } else if (this.state.fromChild === 'Two') {
-              axios.put('/update?_id=' + this.state.parent, {
-                childTwo: this.state.currentNode
-              })
-              .then(response => {console.log('parent', response.body)})
-              .catch(error => {
-                console.log(error)
-              })
-            }
+        let response = await call
+        console.log('initial post', response.data)
+        await this.setState({currentNode: response.data._id})
+        if (this.state.fromChild === 'One') {
+          console.log('current', this.state.currentNode)
+          console.log('parent of current', this .state.parent)
+          let call = axios.put('/update?_id=' + this.state.parent, {
+            childOne: this.state.currentNode
           })
-        })
+          let response = await call
+          console.log('child one', response.data)
+        } else if (this.state.fromChild === 'Two') {
+          let call = axios.put('/update?_id=' + this.state.parent, {
+            childTwo: this.state.currentNode
+          })
+          let response = await call
+          console.log('child two', response.data)
+        }
       }
     } else {
       // update node
-      axios.put('/update?_id=' + this.state.currentNode, {
+      let call = axios.put('/update?_id=' + this.state.currentNode, {
         parent: this.state.parent,
         link: this.state.link,
         choiceOne: this.state.choiceOne,
@@ -280,12 +276,8 @@ class VideoCreator extends React.Component {
         childOne: this.state.childOne,
         childTwo: this.state.childTwo
       })
-      .then(response => {
-        console.log('put response', response)
-      })
-      .catch(error => {
-        console.log(error)
-      });
+      let response = await call
+        console.log('put response', response.data)
     }
   }
 
@@ -306,13 +298,14 @@ class VideoCreator extends React.Component {
       await this.getChildOne(this.state.childOne)
     }
     if (this.state.childTwo !== undefined) {
-      await this.getChildTwo(this.state.childOne)
+      await this.getChildTwo(this.state.childTwo)
     }
   }
 
   async handleChoiceClickOne(event) {
     await this.setState({fromChild: 'One'})
     if (!this.state.childOne) {
+      console.log('no child one')
       let holder = this.state.currentNode
       await this.clearCurrent()
       await this.setState({parent: holder})
@@ -329,7 +322,7 @@ class VideoCreator extends React.Component {
       await this.getChildOne(this.state.childOne)
     }
     if (this.state.childTwo !== undefined) {
-      await this.getChildTwo(this.state.childOne)
+      await this.getChildTwo(this.state.childTwo)
     }
   }
 
@@ -352,7 +345,7 @@ class VideoCreator extends React.Component {
       await this.getChildOne(this.state.childOne)
     }
     if (this.state.childTwo !== undefined) {
-      await this.getChildTwo(this.state.childOne)
+      await this.getChildTwo(this.state.childTwo)
     }
   }
 
