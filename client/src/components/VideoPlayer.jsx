@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import ReactPlayer from 'react-player'
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   button: {
@@ -78,22 +81,38 @@ async onChoiceTwo() {
             playing />
         </div>
         <div>
-          <Button
-          variant="contained"
-          color="primary"
-          onClick={this.onChoiceOne}
+          <Grid
+            container
+            spacing={24}
+            style={{padding: 24}}
+            direction="row"
+            justify="center"
           >
-            {this.state.choiceOne}
-          </Button>
-        </div>
-        <div>
-          <Button
-          variant="contained"
-          color="primary"
-          onClick={this.onChoiceTwo}
-          >
-            {this.state.choiceTwo}
-          </Button>
+            <Grid
+              item xs={6}
+            >
+              <Button
+              variant="contained"
+              color="primary"
+              onClick={this.onChoiceOne}
+              >
+                {this.state.choiceOne}
+              </Button>
+            </Grid>
+
+            <Grid
+              item xs={6}
+            >
+              <Button
+              variant="contained"
+              color="primary"
+              onClick={this.onChoiceTwo}
+              >
+                {this.state.choiceTwo}
+              </Button>
+            </Grid>
+
+          </Grid>
         </div>
       </div>
     )
