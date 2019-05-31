@@ -46,6 +46,14 @@ class VideoCreator extends React.Component {
       childTwoChildOne: undefined,
       childTwoChildTwo: undefined,
 
+      rememberNode: undefined,
+      rememberParent: undefined,
+      rememberLink: "",
+      rememberChoiceOne: "",
+      rememberChoiceTwo: "",
+      rememberChildOne: undefined,
+      rememberChildTwo: undefined,
+
       linkFormId: 'Link',
       linkFormType: 'url',
       linkFormPlaceholder: 'Link',
@@ -66,6 +74,8 @@ class VideoCreator extends React.Component {
     this.handleChoiceClickTwo = this.handleChoiceClickTwo.bind(this);
     this.handleChoiceOneChange = this.handleChoiceOneChange.bind(this);
     this.handleChoiceTwoChange = this.handleChoiceTwoChange.bind(this);
+    this.handleRemember = this.handleRemember.bind(this);
+    this.handleInsertRemembered = this.handleInsertRemembered.bind(this);
     this.getParent = this.getParent.bind(this);
     this.getCurrent = this.getCurrent.bind(this);
     this.getChildOne = this.getChildOne.bind(this);
@@ -349,6 +359,34 @@ class VideoCreator extends React.Component {
     }
   }
 
+  async handleRemember(event) {
+    let call = axios.get('/getNode?_id=' + this.state.currentNode)
+    let response = await call
+    console.log ('current', response.data)
+    this.setState({
+      rememberNode: response.data._id,
+      rememberLink: response.data.link,
+      rememberChoiceOne: response.data.choiceOne,
+      rememberChoiceTwo: response.data.choiceTwo,
+      rememberChildOne: response.data.childOne,
+      rememberChildTwo: response.data.childTwo,
+    }, () => {
+      console.log('current node remembered', this.state.rememberNode)
+    })
+  }
+
+  async handleInsertRemembered(event) {
+   await this.setState({
+    link: this.state.rememberLink,
+    choiceOne: this.state.rememberChoiceOne,
+    choiceTwo: this.state.rememberChoiceTwo,
+    childOne: this.state.rememberChildOne,
+    childTwo: this.state.rememberChildTwo
+   })
+   await this.getChildOne(this.state.childOne)
+   await this.getChildTwo(this.state.childTwo)
+  }
+
   handleLinkChange(event) {
     this.setState({link: event.target.value});
   }
@@ -455,15 +493,44 @@ class VideoCreator extends React.Component {
                     />
 
                   </Grid>
-                  <Grid item xs={12}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      value="Submit"
-                    >
-                      Save Node
-                    </Button>
+                  <Grid
+                    item xs={12}
+                    container
+                    spacing={24}
+                    style={{padding: 24}}
+                    direction="row"
+                    justify="center"
+                  >
+                    <Grid item xs={3}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        value="Submit"
+                      >
+                        Save Node
+                      </Button>
+                    </Grid>
+
+                    <Grid item xs={3}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this.handleRemember}
+                      >
+                        Remember Node
+                      </Button>
+                    </Grid>
+
+                    <Grid item xs={3}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this.handleInsertRemembered}
+                      >
+                        Insert Node
+                      </Button>
+                    </Grid>
                   </Grid>
                 </Grid>
 

@@ -27,53 +27,42 @@ class VideoPlayer extends Component {
     this.onChoiceTwo = this.onChoiceTwo.bind(this)
   }
 
-componentDidMount() {
-  fetch('/init')
-        .catch(err => {
-          console.error(err)
-        })
-        .then(res => {
-          return res.json()
-        },
-        (err) =>{
-          console.error(err)
-        })
-        .then(res => {
-          console.log('response', res)
-          this.setState({
-            currentNode: res._id,
-            link: res.link,
-            choiceOne: res.choiceOne,
-            choiceTwo: res.choiceTwo,
-            childOne: res.childOne,
-            childTwo: res.childTwo
-          })
-        })
-}
-
-onChoiceOne() {
-  let temp = this.state.currentNode
+async componentDidMount() {
+  let response = await fetch('/init')
+  let json = await response.json()
   this.setState({
-    currentNode: temp.childOne
-  }, function() {
-    this.setState({
-      url: this.state.currentNode.video,
-      choiceOne: this.state.currentNode.choiceOneText,
-      choiceTwo: this.state.currentNode.choiceTwoText,
-    })
+    currentNode: json._id,
+    link: json.link,
+    choiceOne: json.choiceOne,
+    choiceTwo: json.choiceTwo,
+    childOne: json.childOne,
+    childTwo: json.childTwo
   })
 }
 
-onChoiceTwo() {
-  let temp = this.state.currentNode
+async onChoiceOne() {
+  let response = await fetch('/getNode?_id=' + this.state.childOne)
+  let json = await response.json()
   this.setState({
-    currentNode: temp.childTwo
-  }, function() {
-    this.setState({
-      url: this.state.currentNode.video,
-      choiceOne: this.state.currentNode.choiceOneText,
-      choiceTwo: this.state.currentNode.choiceTwoText,
-    })
+    currentNode: json._id,
+    link: json.link,
+    choiceOne: json.choiceOne,
+    choiceTwo: json.choiceTwo,
+    childOne: json.childOne,
+    childTwo: json.childTwo
+  })
+}
+
+async onChoiceTwo() {
+  let response = await fetch('/getNode?_id=' + this.state.childTwo)
+  let json = await response.json()
+  this.setState({
+    currentNode: json._id,
+    link: json.link,
+    choiceOne: json.choiceOne,
+    choiceTwo: json.choiceTwo,
+    childOne: json.childOne,
+    childTwo: json.childTwo
   })
 }
 
