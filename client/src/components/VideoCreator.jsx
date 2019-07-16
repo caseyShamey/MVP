@@ -99,7 +99,6 @@ class VideoCreator extends React.Component {
       childOne: response.data.childOne,
       childTwo: response.data.childTwo
     })
-    console.log('initial load', this.state)
     if (this.state.childOne !== undefined) {
       await this.getChildOne(this.state.childOne)
     }
@@ -162,7 +161,6 @@ class VideoCreator extends React.Component {
   async getParent(node) {
     let call = axios.get('/getNode?_id=' + node)
     let response = await call
-    console.log('parent', response.data)
     this.setState({
       parentNode: response.data._id,
       parentParent: response.data.parent,
@@ -172,14 +170,12 @@ class VideoCreator extends React.Component {
       parentChildOne: response.data.childOne,
       parentChildTwo: response.data.childTwo,
     }, () => {
-      console.log('parent node set', this.state.parentNode)
     })
   }
 
   async getCurrent(node) {
     let call = axios.get('/getNode?_id=' + node)
     let response = await call
-    console.log ('current', response.data)
     this.setState({
       currentNode: response.data._id,
       parent: response.data.parent,
@@ -189,14 +185,12 @@ class VideoCreator extends React.Component {
       childOne: response.data.childOne,
       childTwo: response.data.childTwo,
     }, () => {
-      console.log('current node set', this.state.currentNode)
     })
   }
 
   async getChildOne(node) {
     let call = axios.get('/getNode?_id=' + node)
     let response = await call
-    console.log('child one', response.data)
     this.setState({
       childOneNode: response.data._id,
       childOneParent: response.data.parent,
@@ -206,14 +200,12 @@ class VideoCreator extends React.Component {
       childOneChildOne: response.data.childOne,
       childOneChildTwo: response.data.childTwo
     }, () => {
-      console.log('childOne node set', this.state.childOneNode)
     })
   }
 
   async getChildTwo(node) {
     let call = axios.get('/getNode?_id=' + node)
     let response = await call
-    console.log ('child two', response.data)
     this.setState({
       childTwoNode: response.data._id,
       childTwoParent: response.data.parent,
@@ -223,7 +215,6 @@ class VideoCreator extends React.Component {
       childTwoChildOne: response.data.childOne,
       childTwoChildTwo: response.data.childTwo
     }, () => {
-      console.log('childTwo node set', this.state.childTwoNode)
     })
   }
 
@@ -233,7 +224,6 @@ class VideoCreator extends React.Component {
     if (!this.state.currentNode) {
       // set head node on first save
       if (!this.state.parent) {
-        console.log('head')
         let call = axios.post('/save', {
           head: true,
           link: this.state.link,
@@ -246,7 +236,6 @@ class VideoCreator extends React.Component {
         let response = await call
         await this.setState({currentNode: response.data._id})
       } else {
-        console.log('not head')
         // save non head node on first save
         let call = axios.post('/save', {
           head: false,
@@ -258,22 +247,17 @@ class VideoCreator extends React.Component {
           childTwo: this.state.childTwo
         })
         let response = await call
-        console.log('initial post', response.data)
         await this.setState({currentNode: response.data._id})
         if (this.state.fromChild === 'One') {
-          console.log('current', this.state.currentNode)
-          console.log('parent of current', this .state.parent)
           let call = axios.put('/update?_id=' + this.state.parent, {
             childOne: this.state.currentNode
           })
           let response = await call
-          console.log('child one', response.data)
         } else if (this.state.fromChild === 'Two') {
           let call = axios.put('/update?_id=' + this.state.parent, {
             childTwo: this.state.currentNode
           })
           let response = await call
-          console.log('child two', response.data)
         }
       }
     } else {
@@ -287,7 +271,6 @@ class VideoCreator extends React.Component {
         childTwo: this.state.childTwo
       })
       let response = await call
-        console.log('put response', response.data)
     }
   }
 
@@ -315,7 +298,6 @@ class VideoCreator extends React.Component {
   async handleChoiceClickOne(event) {
     await this.setState({fromChild: 'One'})
     if (!this.state.childOne) {
-      console.log('no child one')
       let holder = this.state.currentNode
       await this.clearCurrent()
       await this.setState({parent: holder})
@@ -362,7 +344,6 @@ class VideoCreator extends React.Component {
   async handleRemember(event) {
     let call = axios.get('/getNode?_id=' + this.state.currentNode)
     let response = await call
-    console.log ('current', response.data)
     this.setState({
       rememberNode: response.data._id,
       rememberLink: response.data.link,
@@ -371,7 +352,6 @@ class VideoCreator extends React.Component {
       rememberChildOne: response.data.childOne,
       rememberChildTwo: response.data.childTwo,
     }, () => {
-      console.log('current node remembered', this.state.rememberNode)
     })
   }
 

@@ -1,5 +1,19 @@
-React Boilerplate
+Choice
 
+Choice is a 'choose your own adventure' video creator and viewer inspired by Netflix's Black Mirror: Bandersnatch.
+
+Video Creator Features:
+
+To navigate the graph click on nodes either child node or parent node to bring it up as the Current Story Node.
+
+Save Node: saves Current Story Node to database
+
+Remember Node: Stores Current Story Node and its children to a designated are in state for insertion later.  This feature can be used to copy branches of the graph and insert them elsewhere eliminating the need to manually re-enter identical paths
+
+Insert Node:
+Insert remembered node and branches into the Current Story Node
+
+Switch View button on bottom left of page switches between Video Creator and Video Viewer.
 
 Instructions
 
@@ -12,8 +26,5 @@ Start server:
 Compile frontend:
 'npm run webpack'
 
-Connect to PostgresQL database:
-In knexfile.js change connection (line 6 and line 18) to database of choice
+Connect to MongoDB database
 
-Follow instructions here:
-https://gist.github.com/laurenfazah/e0b0033cdc40a313d4710cc04e654556

@@ -19,7 +19,6 @@ const storyNode = new mongoose.Schema({
 var Cyoa = mongoose.model('Cyoa', storyNode);
 
 var save = (node, callback) => {
-  console.log('hit save')
  Cyoa.create(node, callback)
 }
 
