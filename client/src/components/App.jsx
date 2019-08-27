@@ -19,7 +19,7 @@ class App extends Component {
 
 
   componentDidMount() {}
-
+  // Switch state between video creator and video viewer
   onSwitch() {
     if (this.state.view === videoCreator) {
       this.setState({view: videoPlayer})
